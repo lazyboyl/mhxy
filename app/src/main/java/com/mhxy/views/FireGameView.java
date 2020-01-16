@@ -2,10 +2,13 @@ package com.mhxy.views;
 
 import android.content.Context;
 import android.graphics.*;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.mhxy.R;
+import com.mhxy.init.InitGame;
 
 /**
  * @author linzf
@@ -25,6 +28,10 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private Bitmap bmp;
 
+    private int w;
+
+    private int h;
+
     /**
      * 画笔
      */
@@ -37,6 +44,12 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
         paint = new Paint();
         paint.setColor(Color.GREEN);
         bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.mhxy);
+        InitGame.init(this.getResources());
+        //获取屏幕数据
+        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+        //获取屏幕宽高，单位是像素
+        w = displayMetrics.widthPixels;
+        h = displayMetrics.heightPixels;
     }
 
     @Override
@@ -56,8 +69,8 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void draw() {
         Canvas canvas = sfh.lockCanvas();
-        canvas.drawColor(Color.BLACK);
-        canvas.drawBitmap(bmp, 100, 100, paint);
+        canvas.clipRect(0,0,w,h);
+        canvas.drawBitmap(InitGame.bitmapList.get("dhw"), 0, 0, paint);
         sfh.unlockCanvasAndPost(canvas);
     }
 
