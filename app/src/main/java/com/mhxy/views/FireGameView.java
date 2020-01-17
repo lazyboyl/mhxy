@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.mhxy.R;
 import com.mhxy.init.InitGame;
+import com.mhxy.util.CanvasUtil;
 
 /**
  * @author linzf
@@ -32,10 +33,14 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private int h;
 
+    private int startX = 100, startY = 100;
+
     /**
      * 画笔
      */
     private Paint paint;
+
+    private int currentFrame = 0;
 
     public FireGameView(Context context) {
         super(context);
@@ -69,9 +74,11 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void draw() {
         Canvas canvas = sfh.lockCanvas();
-        Bitmap fyn = InitGame.bitmapList.get("dhw");
-        System.out.println("width:" + fyn.getWidth() + " height:" + fyn.getHeight());
-        canvas.drawBitmap(fyn, 0,-700, paint);
+        canvas.drawColor(Color.BLACK);
+        canvas.save();
+        Bitmap fyn = InitGame.bitmapList.get("fyn");
+        CanvasUtil.canvas8Role(fyn, canvas, paint, 6, currentFrame, startX, startY);
+        canvas.restore();
         sfh.unlockCanvasAndPost(canvas);
     }
 
@@ -85,7 +92,20 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
     public boolean onTouchEvent(MotionEvent event) {
         x = (int) event.getX();
         y = (int) event.getY();
-        draw();
+        for (int i = 0; i < 100; i++) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (currentFrame < 7) {
+                currentFrame++;
+            } else {
+                currentFrame = 0;
+            }
+            startY = startY + 20;
+            draw();
+        }
         return super.onTouchEvent(event);
     }
 
