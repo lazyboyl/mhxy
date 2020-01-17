@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import com.mhxy.R;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,12 +24,24 @@ public class InitGame {
 
     public static void init(Resources resources) {
         Bitmap dhw = null;
+        Bitmap cjsn = null;
+        Bitmap cjsn_new = null;
+        Bitmap fyn = null;
+        Bitmap ddf = null;
         try {
             dhw = BitmapFactory.decodeStream(resources.getAssets().open("dhw.png"));
+            cjsn = BitmapFactory.decodeStream(resources.getAssets().open("cjsn.png"));
+            cjsn_new = BitmapFactory.decodeResource(resources, R.drawable.cjsn);
+            fyn = BitmapFactory.decodeResource(resources, R.drawable.fyn);
+            ddf = BitmapFactory.decodeResource(resources, R.drawable.ddf);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        bitmapList.put("dhw", imageScale(dhw, dhw.getWidth(),dhw.getHeight()));
+        bitmapList.put("dhw", imageScale(dhw, dhw.getWidth() * 2.625,dhw.getHeight()* 2.625) );
+        bitmapList.put("cjsn", imageScale(cjsn, cjsn.getWidth(),cjsn.getHeight()));
+        bitmapList.put("cjsn_new", cjsn_new);
+        bitmapList.put("fyn", fyn);
+        bitmapList.put("ddf", ddf);
     }
 
     /**
@@ -42,7 +55,7 @@ public class InitGame {
      *            输出高度
      * @return
      */
-    public static Bitmap imageScale(Bitmap bitmap, int dst_w, int dst_h) {
+    public static Bitmap imageScale(Bitmap bitmap, double dst_w, double dst_h) {
         int src_w = bitmap.getWidth();
         int src_h = bitmap.getHeight();
         float scale_w = ((float) dst_w) / src_w;

@@ -69,8 +69,9 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void draw() {
         Canvas canvas = sfh.lockCanvas();
-        canvas.clipRect(0,0,w,h);
-        canvas.drawBitmap(InitGame.bitmapList.get("dhw"), 0, 0, paint);
+        Bitmap fyn = InitGame.bitmapList.get("dhw");
+        System.out.println("width:" + fyn.getWidth() + " height:" + fyn.getHeight());
+        canvas.drawBitmap(fyn, 0,-700, paint);
         sfh.unlockCanvasAndPost(canvas);
     }
 
