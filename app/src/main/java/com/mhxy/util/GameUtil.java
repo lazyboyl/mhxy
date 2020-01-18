@@ -20,8 +20,15 @@ public class GameUtil {
     /**
      * 移动的步数
      */
-    public static final Integer STEP = 1;
+    public static final Integer STEP = 25;
 
+    /**
+     * 功能描述：实现角色X轴上的移动
+     * @param startX 开始点
+     * @param endX 结束点
+     * @param centerX 中心偏移值
+     * @return 返回移动后的点
+     */
     public static int addX(int startX, int endX,int centerX){
         if(startX + centerX > endX){
             return startX - STEP;
@@ -30,6 +37,13 @@ public class GameUtil {
         }
     }
 
+    /**
+     * 功能描述：实现角色Y轴上的移动
+     * @param startY 开始点
+     * @param endY 结束点
+     * @param centerY 中心偏移值
+     * @return 返回移动后的点
+     */
     public static int addY(int startY, int endY, int centerY){
         if(startY + centerY > endY){
             return startY - STEP;
@@ -99,11 +113,6 @@ public class GameUtil {
             System.out.println("第二象限" + tan);
         }
         return direction;
-    }
-
-
-    public static void main(String[] args) {
-        get8RoleDirection(100, 100, 50, 50);
     }
 
 }

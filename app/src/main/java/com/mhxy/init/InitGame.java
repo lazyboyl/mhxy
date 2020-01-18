@@ -39,6 +39,19 @@ public class InitGame {
         bmpInfo.setRectX(fyn.getWidth() / 8);
         bmpInfo.setRectY(fyn.getHeight() / 8);
         bitmapList.put("fyn", bmpInfo);
+        // 计算放大比
+        double imageScaleSize = fyn.getWidth() / 544;
+        try {
+            Bitmap dhw = BitmapFactory.decodeStream(resources.getAssets().open("dhw.png"));
+            dhw = imageScale(dhw, dhw.getWidth() * imageScaleSize,dhw.getHeight()* imageScaleSize);
+            BmpInfo dhwInfo = new BmpInfo();
+            dhwInfo.setBmp(dhw);
+            dhwInfo.setBmpHeight(dhw.getHeight());
+            dhwInfo.setBmpWidth(dhw.getWidth());
+            bitmapList.put("dhw", dhwInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

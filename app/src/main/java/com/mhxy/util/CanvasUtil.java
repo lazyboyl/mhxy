@@ -11,6 +11,12 @@ import com.mhxy.entity.BmpInfo;
  */
 public class CanvasUtil {
 
+    public static void canvasMap(BmpInfo bmpInfo, Canvas canvas, Paint paint,int startX, int startY){
+        canvas.save();
+        canvas.drawBitmap(bmpInfo.getBmp(), startX, startY, paint);
+        canvas.restore();
+    }
+
 
     /**
      * 功能描述：实现角色的绘制
@@ -23,12 +29,14 @@ public class CanvasUtil {
      * @param startY       起点Y
      */
     public static void canvas8Role(BmpInfo bmpInfo, Canvas canvas, Paint paint, int direction,int currentFrame, int startX, int startY) {
+        canvas.save();
         int bmpWidth = bmpInfo.getBmpWidth();
         int bmpHeight = bmpInfo.getBmpHeight();
         // 设置当前的可视区域
         canvas.clipRect(startX, startY, startX + bmpInfo.getRectX(), startY + bmpInfo.getRectY());
         // 绘制角色的移动图片
         canvas.drawBitmap(bmpInfo.getBmp(), startX - currentFrame * bmpWidth / 8, startY - direction * bmpHeight / 8, paint);
+        canvas.restore();
     }
 
 }

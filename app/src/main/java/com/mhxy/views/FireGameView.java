@@ -18,30 +18,44 @@ import com.mhxy.util.GameUtil;
  */
 public class FireGameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private int x = 0;
+    /**
+     * 当前触屏点的坐标
+     */
+    private int x, y;
 
-    private int y = 0;
+    /**
+     * 角色初始的做白哦位置
+     */
+    private int startX = 561, startY = 583;
+
+    /**
+     * 屏幕的宽度和高度
+     */
+    private int w, h;
 
     /**
      * 用户控制SurfaceView
      */
     private SurfaceHolder sfh;
 
-    private int w;
-
-    private int h;
-
-    private int startX = 500, startY = 500;
-
-    public boolean flag = false;
-
     /**
      * 画笔
      */
     private Paint paint;
 
+    /**
+     * 移动的时候循环的标志
+     */
+    public boolean flag = false;
+
+    /**
+     * 当前角色移动的帧数
+     */
     private int currentFrame = 0;
 
+    /**
+     * 角色对象信息
+     */
     private BmpInfo fyn;
 
     public FireGameView(Context context) {
@@ -76,10 +90,10 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
     public void draw(int direction) {
         Canvas canvas = sfh.lockCanvas();
         canvas.drawColor(Color.BLACK);
-        canvas.save();
+        BmpInfo dhwInfo = InitGame.bitmapList.get("dhw");
+        CanvasUtil.canvasMap(dhwInfo, canvas, paint, 0, -1200);
         fyn = InitGame.bitmapList.get("fyn");
         CanvasUtil.canvas8Role(fyn, canvas, paint, direction, currentFrame, startX, startY);
-        canvas.restore();
         sfh.unlockCanvasAndPost(canvas);
     }
 
@@ -91,9 +105,30 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(flag){
+            flag = false;
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         flag = true;
         x = (int) event.getX();
         y = (int) event.getY();
+        // 重新计算目的值的位数，保证终点的x和y的值是起点的x和y值加上GameUtil.STEP乘以整数
+        int remainderX = (startX + fyn.getCenterX()) % GameUtil.STEP;
+        int remainderY = (startY + fyn.getCenterY()) % GameUtil.STEP;
+        if (x > startX + fyn.getCenterX()) {
+            x = x / GameUtil.STEP * GameUtil.STEP + remainderX;
+        } else {
+            x = x / GameUtil.STEP * GameUtil.STEP - (GameUtil.STEP - remainderX);
+        }
+        if (y > startY + fyn.getCenterY()) {
+            y = y / GameUtil.STEP * GameUtil.STEP + remainderY;
+        } else {
+            y = y / GameUtil.STEP * GameUtil.STEP - (GameUtil.STEP - remainderY);
+        }
         // 根据起始点和目的点来获取当前角色行走的方向【bmpWidth / 16】这是为了将起点设置为图像的中间位置
         int direction = GameUtil.get8RoleDirection(startX + fyn.getCenterX(), startY + fyn.getCenterY(), x, y);
         while (flag) {
