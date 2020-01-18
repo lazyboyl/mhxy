@@ -3,13 +3,13 @@ package com.mhxy.views;
 import android.content.Context;
 import android.graphics.*;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import com.mhxy.R;
+import com.mhxy.entity.BmpInfo;
 import com.mhxy.init.InitGame;
 import com.mhxy.util.CanvasUtil;
+import com.mhxy.util.GameUtil;
 
 /**
  * @author linzf
@@ -18,22 +18,22 @@ import com.mhxy.util.CanvasUtil;
  */
 public class FireGameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private int x = 100;
+    private int x = 0;
 
-    private int y = 100;
+    private int y = 0;
 
     /**
      * 用户控制SurfaceView
      */
     private SurfaceHolder sfh;
 
-    private Bitmap bmp;
-
     private int w;
 
     private int h;
 
-    private int startX = 100, startY = 100;
+    private int startX = 500, startY = 500;
+
+    public boolean flag = false;
 
     /**
      * 画笔
@@ -42,13 +42,14 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     private int currentFrame = 0;
 
+    private BmpInfo fyn;
+
     public FireGameView(Context context) {
         super(context);
         sfh = this.getHolder();
         sfh.addCallback(this);
         paint = new Paint();
         paint.setColor(Color.GREEN);
-        bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.mhxy);
         InitGame.init(this.getResources());
         //获取屏幕数据
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
@@ -59,7 +60,7 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        draw();
+        draw(0);
     }
 
     @Override
@@ -72,12 +73,12 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
 
     }
 
-    public void draw() {
+    public void draw(int direction) {
         Canvas canvas = sfh.lockCanvas();
         canvas.drawColor(Color.BLACK);
         canvas.save();
-        Bitmap fyn = InitGame.bitmapList.get("fyn");
-        CanvasUtil.canvas8Role(fyn, canvas, paint, 6, currentFrame, startX, startY);
+        fyn = InitGame.bitmapList.get("fyn");
+        CanvasUtil.canvas8Role(fyn, canvas, paint, direction, currentFrame, startX, startY);
         canvas.restore();
         sfh.unlockCanvasAndPost(canvas);
     }
@@ -90,21 +91,32 @@ public class FireGameView extends SurfaceView implements SurfaceHolder.Callback 
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        flag = true;
         x = (int) event.getX();
         y = (int) event.getY();
-        for (int i = 0; i < 100; i++) {
+        // 根据起始点和目的点来获取当前角色行走的方向【bmpWidth / 16】这是为了将起点设置为图像的中间位置
+        int direction = GameUtil.get8RoleDirection(startX + fyn.getCenterX(), startY + fyn.getCenterY(), x, y);
+        while (flag) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+            if (x == startX + fyn.getCenterX() && y == startY + fyn.getCenterY()) {
+                flag = false;
+            }
+            if (x != startX + fyn.getCenterX()) {
+                startX = GameUtil.addX(startX, x, fyn.getCenterX());
+            }
+            if (y != startY + fyn.getCenterY()) {
+                startY = GameUtil.addY(startY, y, fyn.getCenterY());
             }
             if (currentFrame < 7) {
                 currentFrame++;
             } else {
                 currentFrame = 0;
             }
-            startY = startY + 20;
-            draw();
+            draw(direction);
         }
         return super.onTouchEvent(event);
     }
